@@ -1,5 +1,22 @@
 
-# Contributing
+# KEDA Durable Functions Scaler
+
+KEDA Durable Functions Scaler is an extension that is enable us to autocale Durable Functions deployed on Kubernetes cluster. 
+This extension uses [External Scaler Support for KEDA](https://github.com/kedacore/keda/pull/294).
+
+The key features of KEDA Durable Functions Scaler are:
+
+* Intelligent Auto Scaling
+* One-liner deployment using Helm
+
+## Getting Started & Documentation
+
+* Getting Started
+* Architecture Documentation
+* Reference Documentation
+
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
