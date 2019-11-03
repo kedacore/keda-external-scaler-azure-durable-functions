@@ -7,9 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D2DA52E7-138
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CC961BA6-AE59-4F94-90B1-1968569037E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keda.Durable.Scaler.Server.Test", "tests\Keda.Durable.Scaler.Server.Test\Keda.Durable.Scaler.Server.Test.csproj", "{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keda.Durable.Scaler.Server", "src\Keda.Durable.Scaler.Server\Keda.Durable.Scaler.Server.csproj", "{E2C671C6-84BD-409D-82A9-57D76221C033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keda.Durable.Scaler.Server.Test", "tests\Keda.Durable.Scaler.Server.Test\Keda.Durable.Scaler.Server.Test.csproj", "{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keda.Durable.Scaler.Integration.Test", "tests\Keda.Durable.Scaler.Integration.Test\Keda.Durable.Scaler.Integration.Test.csproj", "{8F67D312-E70E-4B13-A766-DDB3662D24DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,21 +19,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2C671C6-84BD-409D-82A9-57D76221C033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2C671C6-84BD-409D-82A9-57D76221C033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2C671C6-84BD-409D-82A9-57D76221C033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2C671C6-84BD-409D-82A9-57D76221C033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F67D312-E70E-4B13-A766-DDB3662D24DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F67D312-E70E-4B13-A766-DDB3662D24DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F67D312-E70E-4B13-A766-DDB3662D24DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F67D312-E70E-4B13-A766-DDB3662D24DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F6BF0612-1B75-40C0-8C89-F97EBBBC2F2E} = {CC961BA6-AE59-4F94-90B1-1968569037E3}
 		{E2C671C6-84BD-409D-82A9-57D76221C033} = {D2DA52E7-1388-4F75-A674-7552D62C2D83}
+		{CBD4DC56-EEDD-4A0E-9B14-F2CEC2BA2780} = {CC961BA6-AE59-4F94-90B1-1968569037E3}
+		{8F67D312-E70E-4B13-A766-DDB3662D24DD} = {CC961BA6-AE59-4F94-90B1-1968569037E3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8992D00B-F228-4DB6-8A38-B8FA63F6AB1C}

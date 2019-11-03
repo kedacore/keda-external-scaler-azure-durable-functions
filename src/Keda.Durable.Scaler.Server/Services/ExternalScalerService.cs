@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Keda.Durable.Scaler.Server.Protos;
@@ -27,7 +28,14 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
-            return base.GetMetrics(request, context);
+            var res = new GetMetricsResponse();
+            var metricValue = new MetricValue();
+            metricValue.MetricName = "hello";
+            metricValue.MetricValue_ = 10;
+            res.MetricValues.Add(metricValue);
+            return Task.FromResult(res);
+
+
         }
 
         public override Task<Empty> Close(ScaledObjectRef request, ServerCallContext context)
