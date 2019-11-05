@@ -6,11 +6,11 @@ using DurableTask.AzureStorage.Monitoring;
 
 namespace Keda.Durable.Scaler.Server.Repository
 {
-    public interface IPerformanceMonitoryRepository
+    public interface IPerformanceMonitorRepository
     {
         Task<PerformanceHeartbeat> PulseAsync(int currentWorkerCount);
     }
-    public class PerformanceMonitorRepository : IPerformanceMonitoryRepository
+    public class PerformanceMonitorRepository : IPerformanceMonitorRepository
     {
         private DurableTaskContext _context;
         public PerformanceMonitorRepository(DurableTaskContext context)
