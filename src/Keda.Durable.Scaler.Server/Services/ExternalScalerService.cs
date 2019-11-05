@@ -6,11 +6,16 @@ using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Keda.Durable.Scaler.Server.Protos;
+using Keda.Durable.Scaler.Server.Repository;
 
 namespace Keda.Durable.Scaler.Server.Services
 {
     public class ExternalScalerService : ExternalScaler.ExternalScalerBase
     {
+        public ExternalScalerService(IPerformanceMonitorRepository)
+        {
+
+        }
         public override Task<Empty> New(NewRequest request, ServerCallContext context)
         {
             return base.New(request, context);

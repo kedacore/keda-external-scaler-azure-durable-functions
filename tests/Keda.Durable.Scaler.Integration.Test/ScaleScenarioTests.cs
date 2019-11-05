@@ -37,10 +37,10 @@ namespace Keda.Durable.Scaler.Integration.Test
             public override void ConfigureServices(IServiceCollection services) 
             {
                 base.ConfigureServices(services);
-                services.AddSingleton<IPerformanceMonitoryRepository>(new MockSimplePerformanceMonitoryRepository());
+                services.AddSingleton<IPerformanceMonitorRepository>(new MockSimplePerformanceMonitorRepository());
             }
         }
-        private class MockSimplePerformanceMonitoryRepository : IPerformanceMonitoryRepository
+        private class MockSimplePerformanceMonitorRepository : IPerformanceMonitorRepository
         {
             public Task<PerformanceHeartbeat> PulseAsync(int currentWorkerCount)
             {

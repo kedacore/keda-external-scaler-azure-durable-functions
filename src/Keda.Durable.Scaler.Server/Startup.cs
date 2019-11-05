@@ -28,7 +28,7 @@ namespace Keda.Durable.Scaler.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
-            services.AddSingleton<IPerformanceMonitoryRepository, PerformanceMonitorRepository>();
+            services.AddSingleton<IPerformanceMonitorRepository, PerformanceMonitorRepository>();
             // TODO add configuration settings for Durable Task
             services.AddSingleton<DurableTaskContext>(new DurableTaskContext());
         }
