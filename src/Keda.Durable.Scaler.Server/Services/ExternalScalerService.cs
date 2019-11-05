@@ -12,7 +12,7 @@ namespace Keda.Durable.Scaler.Server.Services
 {
     public class ExternalScalerService : ExternalScaler.ExternalScalerBase
     {
-        public ExternalScalerService(IPerformanceMonitorRepository)
+        public ExternalScalerService(IPerformanceMonitorRepository repository)
         {
 
         }
