@@ -63,6 +63,7 @@ namespace Keda.Durable.Scaler.Server.Services
                 MetricName = ScaleRecommendation,
                 TargetSize = 0
             });
+            response.MetricSpecs.Add(fields);
             return base.GetMetricSpec(request, context);
         }
 
