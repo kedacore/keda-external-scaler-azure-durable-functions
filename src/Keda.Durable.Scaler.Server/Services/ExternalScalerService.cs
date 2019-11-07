@@ -10,6 +10,8 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Keda.Durable.Scaler.Server.Protos;
 using Keda.Durable.Scaler.Server.Repository;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Keda.Durable.Scaler.Server.Services
 {
@@ -18,14 +20,22 @@ namespace Keda.Durable.Scaler.Server.Services
         private const string ScaleRecommendation = "ScaleRecommendation";
         private IPerformanceMonitorRepository _performanceMonitorRepository;
         private IKubernetesRepository _kubernetesRepository;
-        
-        public ExternalScalerService(IPerformanceMonitorRepository performanceMonitorRepository, IKubernetesRepository kubernetesRepository)
+        private readonly ILogger<ExternalScalerService> _logger;
+
+        public ExternalScalerService(IPerformanceMonitorRepository performanceMonitorRepository, IKubernetesRepository kubernetesRepository, ILogger<ExternalScalerService> logger)
         {
             _performanceMonitorRepository = performanceMonitorRepository;
             _kubernetesRepository = kubernetesRepository;
+            _logger = logger;
         }
         public override Task<Empty> New(NewRequest request, ServerCallContext context)
         {
+            var requestOjbect = JsonConvert.SerializeObject(request);
+            var contextObject = JsonConvert.SerializeObject(context);
+            _logger.LogInformation("******* requestObject");
+            _logger.LogInformation(requestOjbect);
+            _logger.LogInformation("***** contextObject");
+            _logger.LogInformation(contextObject);
             // We don't need to do something in here. 
             return Task.FromResult(new Empty());
         }
