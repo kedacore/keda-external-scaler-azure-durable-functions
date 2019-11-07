@@ -1,1 +1,4 @@
 ﻿kubeconfig
+azds.yaml
+values.dev.yaml
+.env
