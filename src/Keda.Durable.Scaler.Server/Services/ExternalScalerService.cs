@@ -68,6 +68,7 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
+            _logger.LogInformation("****** GetMetrics");
             var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync());
             int targetSize = 0;
             switch (heartbeat.ScaleRecommendation.Action)
