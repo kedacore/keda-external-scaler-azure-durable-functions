@@ -64,7 +64,7 @@ namespace Keda.Durable.Scaler.Server.Services
                 TargetSize = 0
             });
             response.MetricSpecs.Add(fields);
-            return base.GetMetricSpec(request, context);
+            return Task.FromResult(response);
         }
 
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
