@@ -61,7 +61,7 @@ namespace Keda.Durable.Scaler.Server.Services
             fields.Add(new MetricSpec()
             {
                 MetricName = ScaleRecommendation,
-                TargetSize = 0
+                TargetSize = 5
             });
             response.MetricSpecs.Add(fields);
             return Task.FromResult(response);
@@ -75,10 +75,10 @@ namespace Keda.Durable.Scaler.Server.Services
             switch (heartbeat.ScaleRecommendation.Action)
             {
                 case ScaleAction.AddWorker:
-                    targetSize = 1;
+                    targetSize = 9;
                     break;
                 case ScaleAction.RemoveWorker:
-                    targetSize = -1;
+                    targetSize = 1;
                     break;
                 default:
                     break;
