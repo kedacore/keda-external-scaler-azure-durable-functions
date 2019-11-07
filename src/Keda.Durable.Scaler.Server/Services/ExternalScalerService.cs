@@ -30,8 +30,13 @@ namespace Keda.Durable.Scaler.Server.Services
         }
         public override Task<Empty> New(NewRequest request, ServerCallContext context)
         {
-            var requestOjbect = JsonConvert.SerializeObject(request);
-            var contextObject = JsonConvert.SerializeObject(context);
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
+            var requestOjbect = JsonConvert.SerializeObject(request, settings);
+            var contextObject = JsonConvert.SerializeObject(context, settings);
             _logger.LogInformation("******* requestObject");
             _logger.LogInformation(requestOjbect);
             _logger.LogInformation("***** contextObject");
