@@ -20,7 +20,7 @@ namespace Keda.Durable.Scaler.Server
     {
         public const string ConnectionString = "CONNECTION_STRING";
 
-        public const string TaskHub = "TaskHub";
+        public const string TaskHub = "TASK_HUB";
 
         public const string MaxPollingIntervalMillisecond = "MAX_POLLING_INTERVAL";
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -30,7 +30,8 @@ namespace Keda.Durable.Scaler.Server
             services.AddGrpc();
             services.AddSingleton<IPerformanceMonitorRepository, PerformanceMonitorRepository>();
             // TODO add configuration settings for Durable Task
-            services.AddSingleton<DurableTaskContext>(new DurableTaskContext());
+            services.AddSingleton<DurableTaskContext>(GetDurableTaskContext());
+            services.AddSingleton<IKubernetesRepository, KubernetesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +50,6 @@ namespace Keda.Durable.Scaler.Server
         internal DurableTaskContext GetDurableTaskContext()
         {
             var builder = new ConfigurationBuilder();
-            builder.SetBasePath(Directory.GetCurrentDirectory());
-
             builder.AddEnvironmentVariables();
             var configuration = builder.Build();
             return new DurableTaskContext()
