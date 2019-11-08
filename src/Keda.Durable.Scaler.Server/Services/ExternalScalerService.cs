@@ -37,10 +37,10 @@ namespace Keda.Durable.Scaler.Server.Services
 
             var requestOjbect = JsonConvert.SerializeObject(request, settings);
             var contextObject = JsonConvert.SerializeObject(context, settings);
-            _logger.LogInformation("******* requestObject");
-            _logger.LogInformation(requestOjbect);
-            _logger.LogInformation("***** contextObject");
-            _logger.LogInformation(contextObject);
+            _logger.LogDebug("******* requestObject");
+            _logger.LogDebug(requestOjbect);
+            _logger.LogDebug("***** contextObject");
+            _logger.LogDebug(contextObject);
             // We don't need to do something in here. 
             return Task.FromResult(new Empty());
         }
@@ -69,7 +69,7 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
-            _logger.LogInformation("****** GetMetrics");
+            _logger.LogDebug("****** GetMetrics");
             var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync());
             int targetSize = 0;
             switch (heartbeat.ScaleRecommendation.Action)
