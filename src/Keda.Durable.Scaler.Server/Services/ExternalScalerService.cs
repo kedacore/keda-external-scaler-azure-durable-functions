@@ -16,18 +16,13 @@ using Newtonsoft.Json;
 
 namespace Keda.Durable.Scaler.Server.Services
 {
-    public class DurableScalerConfig
-    {
-        public string Namespace { get; set; }
-        public string DeploymentName { get; set; }
-    }
     public class ExternalScalerService : ExternalScaler.ExternalScalerBase
     {
         private const string ScaleRecommendation = "ScaleRecommendation";
         private IPerformanceMonitorRepository _performanceMonitorRepository;
         private IKubernetesRepository _kubernetesRepository;
         private readonly ILogger<ExternalScalerService> _logger;
-        private ConcurrentDictionary<string, DurableScalerConfig> _scalers = new ConcurrentDictionary<string, DurableScalerConfig>();
+
         public ExternalScalerService(IPerformanceMonitorRepository performanceMonitorRepository, IKubernetesRepository kubernetesRepository, ILogger<ExternalScalerService> logger)
         {
             _performanceMonitorRepository = performanceMonitorRepository;
@@ -47,13 +42,6 @@ namespace Keda.Durable.Scaler.Server.Services
             _logger.LogDebug(requestOjbect);
             _logger.LogDebug("***** contextObject");
             _logger.LogDebug(contextObject);
-    
-            var scaler = new DurableScalerConfig
-            {
-                Namespace = request.ScaledObjectRef.Namespace,
-                DeploymentName = request.ScaledObjectRef.Name
-            };
-            _scalers.TryAdd(GetScalerUniqueName(request.ScaledObjectRef), scaler);
 
             return Task.FromResult(new Empty());
         }
@@ -67,7 +55,7 @@ namespace Keda.Durable.Scaler.Server.Services
         {
             _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} IsActive() called.");
             // True or false if the deployment work in progress. 
-            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(_scalers[GetScalerUniqueName(request)]));
+            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(request.Namespace, request.Name));
             var response = new IsActiveResponse();
             response.Result = true;
             return response;
@@ -90,7 +78,7 @@ namespace Keda.Durable.Scaler.Server.Services
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() called.");
-            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(_scalers[GetScalerUniqueName(request.ScaledObjectRef)]));
+            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(request.ScaledObjectRef.Namespace, request.ScaledObjectRef.Name));
             int targetSize = 0;
             switch (heartbeat.ScaleRecommendation.Action)
             {
@@ -127,9 +115,9 @@ namespace Keda.Durable.Scaler.Server.Services
             return Task.FromResult(new Empty());
         }
 
-        private Task<int> GetCurrentWorkerCountAsync(DurableScalerConfig config)
+        private Task<int> GetCurrentWorkerCountAsync(string nameSpace, string deploymentName)
         {
-            return _kubernetesRepository.GetNumberOfPodAsync(config.DeploymentName, config.Namespace);
+            return _kubernetesRepository.GetNumberOfPodAsync(deploymentName, nameSpace);
         }
 
     }
