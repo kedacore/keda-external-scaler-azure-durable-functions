@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using DurableTask.AzureStorage.Monitoring;
 using Dynamitey.Internal.Optimization;
@@ -15,13 +16,18 @@ using Newtonsoft.Json;
 
 namespace Keda.Durable.Scaler.Server.Services
 {
+    public class DurableScalerConfig
+    {
+        public string Namespace { get; set; }
+        public string DeploymentName { get; set; }
+    }
     public class ExternalScalerService : ExternalScaler.ExternalScalerBase
     {
         private const string ScaleRecommendation = "ScaleRecommendation";
         private IPerformanceMonitorRepository _performanceMonitorRepository;
         private IKubernetesRepository _kubernetesRepository;
         private readonly ILogger<ExternalScalerService> _logger;
-
+        private ConcurrentDictionary<string, DurableScalerConfig> _scalers;
         public ExternalScalerService(IPerformanceMonitorRepository performanceMonitorRepository, IKubernetesRepository kubernetesRepository, ILogger<ExternalScalerService> logger)
         {
             _performanceMonitorRepository = performanceMonitorRepository;
@@ -30,25 +36,38 @@ namespace Keda.Durable.Scaler.Server.Services
         }
         public override Task<Empty> New(NewRequest request, ServerCallContext context)
         {
+            _logger.LogInformation($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} New() called.");
             var settings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
-
-            var requestOjbect = JsonConvert.SerializeObject(request, settings);
+            var requestOjbect = JsonConvert.SerializeObject(request, settings); 
             var contextObject = JsonConvert.SerializeObject(context, settings);
             _logger.LogDebug("******* requestObject");
             _logger.LogDebug(requestOjbect);
             _logger.LogDebug("***** contextObject");
             _logger.LogDebug(contextObject);
-            // We don't need to do something in here. 
+    
+            var scaler = new DurableScalerConfig
+            {
+                Namespace = request.ScaledObjectRef.Namespace,
+                DeploymentName = request.ScaledObjectRef.Name
+            };
+            _scalers.TryAdd(GetScalerUniqueName(request.ScaledObjectRef), scaler);
+
             return Task.FromResult(new Empty());
+        }
+
+        private string GetScalerUniqueName(ScaledObjectRef scaleObjectRef)
+        {
+            return $"{scaleObjectRef.Namespace}/{scaleObjectRef.Name}";
         }
 
         public override async Task<IsActiveResponse> IsActive(ScaledObjectRef request, ServerCallContext context)
         {
+            _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} IsActive() called.");
             // True or false if the deployment work in progress. 
-            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync());
+            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(_scalers[GetScalerUniqueName(request)]));
             var response = new IsActiveResponse();
             response.Result = true;
             return response;
@@ -56,6 +75,7 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override Task<GetMetricSpecResponse> GetMetricSpec(ScaledObjectRef request, ServerCallContext context)
         {
+            _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} GetMetricSpec() called.");
             var response = new GetMetricSpecResponse();
             var fields = new RepeatedField<MetricSpec>();
             fields.Add(new MetricSpec()
@@ -69,8 +89,8 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
-            _logger.LogDebug("****** GetMetrics");
-            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync());
+            _logger.LogInformation($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() called.");
+            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(_scalers[GetScalerUniqueName(request.ScaledObjectRef)]));
             int targetSize = 0;
             switch (heartbeat.ScaleRecommendation.Action)
             {
@@ -102,13 +122,15 @@ namespace Keda.Durable.Scaler.Server.Services
 
         public override Task<Empty> Close(ScaledObjectRef request, ServerCallContext context)
         {
+            _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} Close() called.");
+            _scalers.TryRemove(GetScalerUniqueName(request), out DurableScalerConfig config);
             // We don't need to do something in here. 
             return Task.FromResult(new Empty());
         }
 
-        private Task<int> GetCurrentWorkerCountAsync()
+        private Task<int> GetCurrentWorkerCountAsync(DurableScalerConfig config)
         {
-            return _kubernetesRepository.GetNumberOfPodAsync("durable-keda", "default");
+            return _kubernetesRepository.GetNumberOfPodAsync(config.DeploymentName, config.Namespace);
         }
 
     }
