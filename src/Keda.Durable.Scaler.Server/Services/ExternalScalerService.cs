@@ -123,7 +123,6 @@ namespace Keda.Durable.Scaler.Server.Services
         public override Task<Empty> Close(ScaledObjectRef request, ServerCallContext context)
         {
             _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} Close() called.");
-            _scalers.TryRemove(GetScalerUniqueName(request), out DurableScalerConfig config);
             // We don't need to do something in here. 
             return Task.FromResult(new Empty());
         }
