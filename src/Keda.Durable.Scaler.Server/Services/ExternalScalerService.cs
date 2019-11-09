@@ -27,7 +27,7 @@ namespace Keda.Durable.Scaler.Server.Services
         private IPerformanceMonitorRepository _performanceMonitorRepository;
         private IKubernetesRepository _kubernetesRepository;
         private readonly ILogger<ExternalScalerService> _logger;
-        private ConcurrentDictionary<string, DurableScalerConfig> _scalers;
+        private ConcurrentDictionary<string, DurableScalerConfig> _scalers = new ConcurrentDictionary<string, DurableScalerConfig>();
         public ExternalScalerService(IPerformanceMonitorRepository performanceMonitorRepository, IKubernetesRepository kubernetesRepository, ILogger<ExternalScalerService> logger)
         {
             _performanceMonitorRepository = performanceMonitorRepository;
