@@ -69,7 +69,7 @@ namespace Keda.Durable.Scaler.Server.Services
             fields.Add(new MetricSpec()
             {
                 MetricName = ScaleRecommendation,
-                TargetSize = 100
+                TargetSize = 5
             });
             response.MetricSpecs.Add(fields);
             return Task.FromResult(response);
@@ -86,14 +86,17 @@ namespace Keda.Durable.Scaler.Server.Services
             {
                 case ScaleAction.AddWorker:
                     targetSize = currentWorkerCount + 1;
+                    targetSize = targetSize * 5;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : AddWorker : Target: {targetSize}");
                     break;
                 case ScaleAction.RemoveWorker:
                     targetSize = currentWorkerCount - 1;
+                    targetSize = targetSize * 5;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : RemoveWorker : Target: {targetSize}");
                     break;
                 default:
                     targetSize = currentWorkerCount;
+                    targetSize = targetSize * 5;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : None : Target: {targetSize}");
                     break;
             }
