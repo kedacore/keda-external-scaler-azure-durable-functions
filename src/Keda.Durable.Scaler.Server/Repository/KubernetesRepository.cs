@@ -15,7 +15,7 @@ namespace Keda.Durable.Scaler.Server.Repository
     public class KubernetesRepository : IKubernetesRepository
     {
         private const string KUBECONFIG = "kubeconfig";
-        private Kubernetes _client;
+        private IKubernetes _client;
 
         public KubernetesRepository()
         {

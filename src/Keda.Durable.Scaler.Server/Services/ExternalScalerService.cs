@@ -46,18 +46,14 @@ namespace Keda.Durable.Scaler.Server.Services
             return Task.FromResult(new Empty());
         }
 
-        private string GetScalerUniqueName(ScaledObjectRef scaleObjectRef)
-        {
-            return $"{scaleObjectRef.Namespace}/{scaleObjectRef.Name}";
-        }
-
         public override async Task<IsActiveResponse> IsActive(ScaledObjectRef request, ServerCallContext context)
         {
             _logger.LogInformation($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} IsActive() called.");
             // True or false if the deployment work in progress. 
             var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(request.Namespace, request.Name));
             var response = new IsActiveResponse();
-            response.Result = true;
+            response.Result = heartbeat.ScaleRecommendation.KeepWorkersAlive;
+            _logger.LogDebug($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} IsActive() = {response?.Result}");
             return response;
         }
 
@@ -99,13 +95,6 @@ namespace Keda.Durable.Scaler.Server.Services
             };
             res.MetricValues.Add(metricValue);
             return res;
-            // Return the value that is 
-            //var res = new GetMetricsResponse();
-            //var metricValue = new MetricValue();
-            //metricValue.MetricName = "hello";
-            //metricValue.MetricValue_ = 10;
-            //res.MetricValues.Add(metricValue);
-            //return Task.FromResult(res);
         }
 
         public override Task<Empty> Close(ScaledObjectRef request, ServerCallContext context)
