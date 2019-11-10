@@ -52,7 +52,11 @@ namespace Keda.Durable.Scaler.Server.Services
             // True or false if the deployment work in progress. 
             var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(request.Namespace, request.Name));
             var response = new IsActiveResponse();
-            response.Result = heartbeat.ScaleRecommendation.KeepWorkersAlive;
+            // TODO Currently, White listing of the function doesn't work. 
+            // So we need to make it single container. 
+            // Wait until the white listing implemented. Then comment out this logic and remove response.Result = true;
+            // response.Result = heartbeat.ScaleRecommendation.KeepWorkersAlive;
+            response.Result = true;
             _logger.LogDebug($"Namespace: {request?.Namespace} DeploymentName: {request?.Name} IsActive() = {response?.Result}");
             return response;
         }
