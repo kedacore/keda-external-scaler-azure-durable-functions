@@ -24,26 +24,13 @@ namespace Keda.Durable.Scaler.Server.Test
         public async Task IsActiveWorksAsExpectedAsync(bool inputKeepWorkersAlive, bool expectedIsAlive)
         {
             int inputCurrentWorkerCount = 1;
-            string expectedName = "foo";
-            string expectedNamespace = "bar";
-            var kubernetesRepositoryMock = new Mock<IKubernetesRepository>();
-            var performanceMonitorRepositoryMock = new Mock<IPerformanceMonitorRepository>();
-
-            var performanceHeartbeat = new PerformanceHeartbeat();
-            var scaleRecommendation = CreateScaleRecommendation(ScaleAction.AddWorker, inputKeepWorkersAlive, "baz");
-            SetScaleRecommendation(performanceHeartbeat, scaleRecommendation);
-
-            performanceMonitorRepositoryMock.Setup(p => p.PulseAsync(inputCurrentWorkerCount)).ReturnsAsync(performanceHeartbeat);
-            kubernetesRepositoryMock.Setup(p => p.GetNumberOfPodAsync(expectedName, expectedNamespace)).ReturnsAsync(inputCurrentWorkerCount);
-            var loggerMock = new Mock<ILogger<ExternalScalerService>>();
-            var service = new ExternalScalerService(performanceMonitorRepositoryMock.Object, kubernetesRepositoryMock.Object, loggerMock.Object);
-
-            var request = CreateScaleObjectRef(expectedName, expectedNamespace);
-
-            Assert.Equal(expectedIsAlive, (await service.IsActive(request, new ServerCallContextImpl())).Result);
+            var fixture = new ServiceFixture(ScaleAction.AddWorker, inputCurrentWorkerCount, inputKeepWorkersAlive);
+            var service = fixture.ExternalScaleService;
+            expectedIsAlive = true; // TODO remove this line once white list implemented.
+            Assert.Equal(expectedIsAlive, (await service.IsActive(fixture.ScaleObjectRef, fixture.ServerCallContext)).Result);
         }
 
-        private ScaleRecommendation CreateScaleRecommendation(ScaleAction scaleAction, bool keepWorkersAlive, string reason)
+        private static ScaleRecommendation CreateScaleRecommendation(ScaleAction scaleAction, bool keepWorkersAlive, string reason)
         {
             var s = typeof(ScaleRecommendation);
             var ctor = s.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance).First();
@@ -59,12 +46,16 @@ namespace Keda.Durable.Scaler.Server.Test
         [InlineData(ScaleAction.AddWorker, 1, 2)]
         [InlineData(ScaleAction.AddWorker, 2, 3)]
         [InlineData(ScaleAction.RemoveWorker, 3, 2)]
-        public async Task GetMetricsWorksAsExpectedAsync(ScaleAction action, int currentWorkerCount, int targetCount) 
+        [InlineData(ScaleAction.None, 3, 3)]
+        public async Task GetMetricsWorksAsExpectedAsync(ScaleAction action, int currentWorkerCount, long targetCount)
         {
-
+            var fixture = new ServiceFixture(action, currentWorkerCount);
+            var service = fixture.ExternalScaleService;
+            var response = await service.GetMetrics(fixture.GetMetricsRequest, fixture.ServerCallContext);
+            Assert.Equal(targetCount, response.MetricValues.First().MetricValue_);
         }
 
-        private ScaledObjectRef CreateScaleObjectRef(string name, string nameSpace)
+        private static ScaledObjectRef CreateScaleObjectRef(string name, string nameSpace)
         {
             return new ScaledObjectRef
             {
@@ -73,12 +64,54 @@ namespace Keda.Durable.Scaler.Server.Test
             };
         }
 
-        private void SetScaleRecommendation(PerformanceHeartbeat performanceHeartbeat,
+        private static void SetScaleRecommendation(PerformanceHeartbeat performanceHeartbeat,
             ScaleRecommendation scaleRecommendation)
         {
             var t = typeof(PerformanceHeartbeat);
             var prop = t.GetProperty("ScaleRecommendation");
             prop.SetValue(performanceHeartbeat, scaleRecommendation);
+        }
+
+        private class ServiceFixture
+        {
+            private readonly Mock<IKubernetesRepository> _kubernetesRepositoryMock;
+            private readonly Mock<IPerformanceMonitorRepository> _performanceMonitorRepositoryMock;
+            private readonly Mock<ILogger<ExternalScalerService>> _loggerMock;
+
+            public ExternalScalerService ExternalScaleService => new ExternalScalerService(_performanceMonitorRepositoryMock.Object, _kubernetesRepositoryMock.Object, _loggerMock.Object);
+
+            public string ExpectedName => "foo";
+            public string ExpectedNamespace => "bar";
+
+            public ServerCallContext ServerCallContext => new ServerCallContextImpl();
+
+            public ScaledObjectRef ScaleObjectRef =>
+                CreateScaleObjectRef(ExpectedName, ExpectedNamespace);
+
+            public GetMetricsRequest GetMetricsRequest
+            {
+                get
+                {
+                    var request = new GetMetricsRequest();
+
+                    request.ScaledObjectRef = this.ScaleObjectRef;
+                    return request;
+                }
+
+            }
+
+            public ServiceFixture(ScaleAction action, int currentWorkerCount, bool inputKeepWorkersAlive = true)
+            {
+                _kubernetesRepositoryMock = new Mock<IKubernetesRepository>();
+                _performanceMonitorRepositoryMock = new Mock<IPerformanceMonitorRepository>();
+
+                var performanceHeartbeat = new PerformanceHeartbeat();
+                var scaleRecommendation = CreateScaleRecommendation(action, inputKeepWorkersAlive, "baz");
+                SetScaleRecommendation(performanceHeartbeat, scaleRecommendation);
+                _performanceMonitorRepositoryMock.Setup(p => p.PulseAsync(currentWorkerCount)).ReturnsAsync(performanceHeartbeat);
+                _kubernetesRepositoryMock.Setup(p => p.GetNumberOfPodAsync(ExpectedName, ExpectedNamespace)).ReturnsAsync(currentWorkerCount);
+                _loggerMock = new Mock<ILogger<ExternalScalerService>>();
+            }
         }
 
         private class ServerCallContextImpl : ServerCallContext
