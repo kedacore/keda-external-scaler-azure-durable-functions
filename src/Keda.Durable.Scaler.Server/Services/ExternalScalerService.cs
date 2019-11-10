@@ -69,7 +69,7 @@ namespace Keda.Durable.Scaler.Server.Services
             fields.Add(new MetricSpec()
             {
                 MetricName = ScaleRecommendation,
-                TargetSize = 1
+                TargetSize = 100
             });
             response.MetricSpecs.Add(fields);
             return Task.FromResult(response);
