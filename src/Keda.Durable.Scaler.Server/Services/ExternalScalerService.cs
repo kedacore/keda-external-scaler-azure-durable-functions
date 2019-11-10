@@ -83,12 +83,15 @@ namespace Keda.Durable.Scaler.Server.Services
             switch (heartbeat.ScaleRecommendation.Action)
             {
                 case ScaleAction.AddWorker:
-                    targetSize = 9;
+                    targetSize = 25;
+                    _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : AddWorker : Target: {targetSize}");
                     break;
                 case ScaleAction.RemoveWorker:
                     targetSize = 1;
+                    _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : RemoveWorker : Target: {targetSize}");
                     break;
                 default:
+                    _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : None : Target: {targetSize}");
                     break;
             }
             var res = new GetMetricsResponse();
