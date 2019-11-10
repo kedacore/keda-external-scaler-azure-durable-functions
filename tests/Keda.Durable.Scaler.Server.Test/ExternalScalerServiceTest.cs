@@ -52,7 +52,7 @@ namespace Keda.Durable.Scaler.Server.Test
             var fixture = new ServiceFixture(action, currentWorkerCount);
             var service = fixture.ExternalScaleService;
             var response = await service.GetMetrics(fixture.GetMetricsRequest, fixture.ServerCallContext);
-            Assert.Equal(targetCount, response.MetricValues.First().MetricValue_);
+            Assert.Equal(targetCount * ExternalScalerService.MLTIPLICITY, response.MetricValues.First().MetricValue_);
         }
 
         private static ScaledObjectRef CreateScaleObjectRef(string name, string nameSpace)
