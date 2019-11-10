@@ -69,7 +69,7 @@ namespace Keda.Durable.Scaler.Server.Services
             fields.Add(new MetricSpec()
             {
                 MetricName = ScaleRecommendation,
-                TargetSize = 5
+                TargetSize = 1
             });
             response.MetricSpecs.Add(fields);
             return Task.FromResult(response);
@@ -78,19 +78,22 @@ namespace Keda.Durable.Scaler.Server.Services
         public override async Task<GetMetricsResponse> GetMetrics(GetMetricsRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() called.");
-            var heartbeat = await _performanceMonitorRepository.PulseAsync(await GetCurrentWorkerCountAsync(request.ScaledObjectRef.Namespace, request.ScaledObjectRef.Name));
+            int currentWorkerCount =
+                await GetCurrentWorkerCountAsync(request.ScaledObjectRef.Namespace, request.ScaledObjectRef.Name);
+            var heartbeat = await _performanceMonitorRepository.PulseAsync(currentWorkerCount);
             int targetSize = 0;
             switch (heartbeat.ScaleRecommendation.Action)
             {
                 case ScaleAction.AddWorker:
-                    targetSize = 25;
+                    targetSize = currentWorkerCount + 1;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : AddWorker : Target: {targetSize}");
                     break;
                 case ScaleAction.RemoveWorker:
-                    targetSize = 1;
+                    targetSize = currentWorkerCount - 1;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : RemoveWorker : Target: {targetSize}");
                     break;
                 default:
+                    targetSize = currentWorkerCount;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : None : Target: {targetSize}");
                     break;
             }
