@@ -91,7 +91,8 @@ namespace Keda.Durable.Scaler.Server.Services
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : AddWorker : Target: {targetSize}");
                     break;
                 case ScaleAction.RemoveWorker:
-                    targetSize = 1;
+                    targetSize = currentWorkerCount - 1;
+                    targetSize = targetSize * MLTIPLICITY - (MLTIPLICITY - 1);
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : RemoveWorker : Target: {targetSize}");
                     break;
                 default:
