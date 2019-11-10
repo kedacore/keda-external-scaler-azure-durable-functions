@@ -55,6 +55,15 @@ namespace Keda.Durable.Scaler.Server.Test
             }) as ScaleRecommendation;
         }
 
+        [Theory]
+        [InlineData(ScaleAction.AddWorker, 1, 2)]
+        [InlineData(ScaleAction.AddWorker, 2, 3)]
+        [InlineData(ScaleAction.RemoveWorker, 3, 2)]
+        public async Task GetMetricsWorksAsExpectedAsync(ScaleAction action, int currentWorkerCount, int targetCount) 
+        {
+
+        }
+
         private ScaledObjectRef CreateScaleObjectRef(string name, string nameSpace)
         {
             return new ScaledObjectRef
