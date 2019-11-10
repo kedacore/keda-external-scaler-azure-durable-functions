@@ -61,7 +61,7 @@ namespace Keda.Durable.Scaler.Server
             {
                 StorageAccount = configuration[ConnectionString],
                 TaskHub = configuration[TaskHub],
-                // MaxPollingIntervalMillisecond = int.Parse(configuration[MaxPollingIntervalMillisecond])
+                MaxPollingIntervalMillisecond = int.Parse(configuration[MaxPollingIntervalMillisecond])
             };
         }
     }
