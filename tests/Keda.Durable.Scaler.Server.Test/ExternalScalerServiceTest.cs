@@ -43,16 +43,16 @@ namespace Keda.Durable.Scaler.Server.Test
         }
 
         [Theory]
-        [InlineData(ScaleAction.AddWorker, 1, 2)]
-        [InlineData(ScaleAction.AddWorker, 2, 3)]
-        [InlineData(ScaleAction.RemoveWorker, 3, 2)]
-        [InlineData(ScaleAction.None, 3, 3)]
+        [InlineData(ScaleAction.AddWorker, 1, 2 * ExternalScalerService.MLTIPLICITY)]
+        [InlineData(ScaleAction.AddWorker, 2, 3 * ExternalScalerService.MLTIPLICITY)]
+        [InlineData(ScaleAction.RemoveWorker, 3, 2 * ExternalScalerService.MLTIPLICITY - (ExternalScalerService.MLTIPLICITY - 1))]
+        [InlineData(ScaleAction.None, 3, 3 * ExternalScalerService.MLTIPLICITY)]
         public async Task GetMetricsWorksAsExpectedAsync(ScaleAction action, int currentWorkerCount, long targetCount)
         {
             var fixture = new ServiceFixture(action, currentWorkerCount);
             var service = fixture.ExternalScaleService;
             var response = await service.GetMetrics(fixture.GetMetricsRequest, fixture.ServerCallContext);
-            Assert.Equal(targetCount * ExternalScalerService.MLTIPLICITY, response.MetricValues.First().MetricValue_);
+            Assert.Equal(targetCount, response.MetricValues.First().MetricValue_);
         }
 
         private static ScaledObjectRef CreateScaleObjectRef(string name, string nameSpace)
