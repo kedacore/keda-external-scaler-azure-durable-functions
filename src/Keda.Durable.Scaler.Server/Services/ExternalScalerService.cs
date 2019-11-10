@@ -18,6 +18,7 @@ namespace Keda.Durable.Scaler.Server.Services
 {
     public class ExternalScalerService : ExternalScaler.ExternalScalerBase
     {
+        public const int MLTIPLICITY = 5;
         private const string ScaleRecommendation = "ScaleRecommendation";
         private IPerformanceMonitorRepository _performanceMonitorRepository;
         private IKubernetesRepository _kubernetesRepository;
@@ -69,7 +70,7 @@ namespace Keda.Durable.Scaler.Server.Services
             fields.Add(new MetricSpec()
             {
                 MetricName = ScaleRecommendation,
-                TargetSize = 5
+                TargetSize = 1 * MLTIPLICITY
             });
             response.MetricSpecs.Add(fields);
             return Task.FromResult(response);
@@ -86,17 +87,16 @@ namespace Keda.Durable.Scaler.Server.Services
             {
                 case ScaleAction.AddWorker:
                     targetSize = currentWorkerCount + 1;
-                    targetSize = targetSize * 5;
+                    targetSize = targetSize * MLTIPLICITY;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : AddWorker : Target: {targetSize}");
                     break;
                 case ScaleAction.RemoveWorker:
-                    targetSize = currentWorkerCount - 1;
-                    targetSize = targetSize * 5;
+                    targetSize = 1;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : RemoveWorker : Target: {targetSize}");
                     break;
                 default:
                     targetSize = currentWorkerCount;
-                    targetSize = targetSize * 5;
+                    targetSize = targetSize * MLTIPLICITY;
                     _logger.LogDebug($"Namespace: {request?.ScaledObjectRef?.Namespace} DeploymentName: {request?.ScaledObjectRef?.Name} GetMetrics() : None : Target: {targetSize}");
                     break;
             }
