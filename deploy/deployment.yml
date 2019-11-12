@@ -2,16 +2,16 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: keda
-  name: keda
+    app: keda-durable-scaler
+  name: keda-durable-scaler
   namespace: keda
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: keda
-  name: keda
+    app: keda-durable-scaler
+  name: keda-durable-scaler
   namespace: keda
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -19,7 +19,7 @@ roleRef:
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: keda
+  name: keda-durable-scaler
   namespace: keda
 ---
 apiVersion: v1
@@ -30,7 +30,6 @@ metadata:
 spec:
   selector:
     service: keda-durable-external-scaler
-  type: LoadBalancer
   ports:
   - protocol: TCP
     port: 5000
@@ -51,7 +50,7 @@ spec:
       labels:
         service: keda-durable-external-scaler
     spec:
-      serviceAccountName: keda
+      serviceAccountName: keda-durable-scaler
       containers:
       - image: tsuyoshiushio/durableexternalscaler:latest
         name: scaler
@@ -61,7 +60,7 @@ spec:
         - name: CONNECTION_STRING
           valueFrom:
             secretKeyRef:
-              name: durable-storage-connection-string
+              name: keda-durable-external-scaler
               key: connection-string 
         - name: TASK_HUB
           value: DurableFunctionsHub

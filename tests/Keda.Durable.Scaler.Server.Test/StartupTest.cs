@@ -17,5 +17,16 @@ namespace Keda.Durable.Scaler.Server.Test
             Assert.Equal("bar", context.TaskHub);
             Assert.Equal(30000, context.MaxPollingIntervalMillisecond);
         }
+        [Fact]
+        public void ConfigrationSettingWithEnvrionmentVariablesWithDefault()
+        {
+            Environment.SetEnvironmentVariable(Startup.ConnectionString, "foo");
+            Environment.SetEnvironmentVariable(Startup.TaskHub, "bar");
+            var startup = new Startup();
+            var context = startup.GetDurableTaskContext();
+            Assert.Equal("foo", context.StorageAccount);
+            Assert.Equal("bar", context.TaskHub);
+            Assert.Equal(5000, context.MaxPollingIntervalMillisecond);
+        }
     }
 }

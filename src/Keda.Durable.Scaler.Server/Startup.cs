@@ -57,12 +57,16 @@ namespace Keda.Durable.Scaler.Server
             var builder = new ConfigurationBuilder();
             builder.AddEnvironmentVariables();
             var configuration = builder.Build();
-            return new DurableTaskContext()
+            var context = new DurableTaskContext();
+            context.StorageAccount = configuration[ConnectionString];
+            context.TaskHub = configuration[TaskHub];
+            string maxPollingIntervalMillisecond = configuration[MaxPollingIntervalMillisecond];
+            if (!string.IsNullOrEmpty(maxPollingIntervalMillisecond))
             {
-                StorageAccount = configuration[ConnectionString],
-                TaskHub = configuration[TaskHub],
-                MaxPollingIntervalMillisecond = int.Parse(configuration[MaxPollingIntervalMillisecond])
-            };
+                context.MaxPollingIntervalMillisecond = int.Parse(maxPollingIntervalMillisecond);
+            }
+
+            return context;
         }
     }
 }
