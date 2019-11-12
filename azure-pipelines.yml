@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
@@ -15,6 +15,52 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: CredScan@2
+  inputs:
+    toolMajorVersion: 'V2'
+
+- task: SdtReport@1
+  inputs:
+    AllTools: false
+    APIScan: false
+    BinSkim: false
+    CodesignValidation: false
+    CredScan: true
+    FortifySCA: false
+    FxCop: false
+    ModernCop: false
+    MSRD: false
+    PoliCheck: false
+    RoslynAnalyzers: false
+    SDLNativeRules: false
+    Semmle: false
+    TSLint: false
+    ToolLogsNotFoundAction: 'Standard'
+
+- task: PublishSecurityAnalysisLogs@2
+  inputs:
+    ArtifactName: 'CodeAnalysisLogs'
+    ArtifactType: 'Container'
+    AllTools: true
+    ToolLogsNotFoundAction: 'Standard'
+
+- task: PostAnalysis@1
+  inputs:
+    AllTools: false
+    APIScan: false
+    BinSkim: false
+    CodesignValidation: false
+    CredScan: true
+    FortifySCA: false
+    FxCop: false
+    ModernCop: false
+    PoliCheck: false
+    RoslynAnalyzers: false
+    SDLNativeRules: false
+    Semmle: false
+    TSLint: false
+    ToolLogsNotFoundAction: 'Standard'
+
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
@@ -27,8 +73,12 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
-- script: dotnet test src/Keda.Durable.Scaler.Serve/Keda.Durable.Scaler.Server.Test.csproj --logger trx --collect "Code coverage"
-  displayName: Unit Test with Coverage
+- task: DotNetCoreCLI@2
+  displayName: Unit Test
+  inputs:
+    command: test
+    projects: '**/Keda.Durable.Scaler.Server.Test.csproj'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
 
 - task: DotNetCoreCLI@2
   displayName: Integration Test
@@ -36,11 +86,6 @@ steps:
     command: test
     projects: '**/Keda.Durable.Scaler.Integration.Test.csproj'
     arguments: '--configuration $(BuildConfiguration)'
-
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
 
 - task: DotNetCoreCLI@2
   displayName: Publish
