@@ -4,7 +4,7 @@ This document covers the details of configration of the Durable Scaler.
 
 ## KEDA Durable Scaler Configration
 
-The configuration of the Scale Server. You can refer the actual yaml file in [here](../../deploy/deployment.yml).
+The configuration of the Scale Server. You can refer the actual yaml file in [here](../deploy/deployment.yml).
 
 ### Example Deployment 
 
@@ -72,7 +72,7 @@ The following arguments are supported:
 
 ## Durable Functions Scale Object
 
-Scale Object is configration object of this scaler. Please refer actual example in [here](../../examples/durable-keda/deployone.yml).
+Scale Object is configration object of this scaler. Please refer actual example in [here](../examples/durable-keda/deployone.yml).
 
 ### Example ScaleObject
 
@@ -103,4 +103,45 @@ The following arguments are supported:
 * `spec.triggers.metadata.scaleAddress`: (Required) Address and port of KEDA Durable Scale Server's endpoint.
 * `spec.triggers.metadata.tlsCertFile`: (Optional) TLS certfile for https between KEDA and KEDA Durable Scaler Server. Currently not supported. Coming soon. 
 
+## Debugging on containers 
+
+### Endpoint of Durable Functions 
+
+For the `examples/durable-keda` app, you can start orchestration to call `http://40.90.221.xxx/api/LoadOrchestration_HttpStart`.
+
+```bash
+$ kubectl get svc  
+NAME           TYPE           CLUSTER-IP   EXTERNAL-IP    PORT(S)        AGE
+durable-keda   LoadBalancer   10.0.221.5   40.90.221.xxx   80:31180/TCP   2d
+```
+
+### Log for KEDA Durable Scale Server
+
+```bash
+$ kubectl get pod -n keda
+NAME                                            READY   STATUS    RESTARTS   AGE
+keda-durable-external-scaler-54854fc478-n2mjs   1/1     Running   0          4h19m
+keda-operator-57c9c8d7fc-rbxq2                  2/2     Running   0          4d5h
+$ kubectl logs -f keda-durable-external-scaler-54854fc478-n2mjs -n keda
+```
+
+### Log for KEDA
+
+```bash
+$ kubectl logs -f keda-operator-57c9c8d7fc-rbxq2 keda-operator -n keda
+```
+
+or
+
+```bash
+$ kubectl logs -f keda-operator-57c9c8d7fc-rbxq2 keda-metrics-apiserver -n keda
+```
+
+### Number of current pod 
+
+For the `examples/durable-keda` app:
+
+```bash
+$ kubectl get pods 
+```
 

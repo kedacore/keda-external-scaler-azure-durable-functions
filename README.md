@@ -36,7 +36,7 @@ Currently, KEDA Durable Scaler can't make functions scale down to zero. Minimum 
 
 * [Getting Started](docs/getting-started.md)
 * [Configration Reference Documentation](docs/reference.md)
-
+* [Developer's Guide](docs/developers-guide.md)
 
 ## Contributing
 
