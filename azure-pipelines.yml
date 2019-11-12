@@ -27,7 +27,7 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
-- script: dotnet test '**/Keda.Durable.Scaler.Server.Test.csproj' --logger trx --collect "Code coverage"
+- script: dotnet test src/Keda.Durable.Scaler.Serve/Keda.Durable.Scaler.Server.Test.csproj --logger trx --collect "Code coverage"
   displayName: Unit Test with Coverage
 
 - task: DotNetCoreCLI@2
