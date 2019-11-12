@@ -27,12 +27,8 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: Unit Test
-  inputs:
-    command: test
-    projects: '**/Keda.Durable.Scaler.Server.Test.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+- script: dotnet test '**/Keda.Durable.Scaler.Server.Test.csproj' --logger trx --collect "Code coverage"
+  displayName: Unit Test with Coverage
 
 - task: DotNetCoreCLI@2
   displayName: Integration Test
@@ -40,6 +36,11 @@ steps:
     command: test
     projects: '**/Keda.Durable.Scaler.Integration.Test.csproj'
     arguments: '--configuration $(BuildConfiguration)'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
 
 - task: DotNetCoreCLI@2
   displayName: Publish
