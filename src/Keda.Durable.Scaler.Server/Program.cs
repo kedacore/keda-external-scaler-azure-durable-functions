@@ -32,7 +32,7 @@ namespace Keda.Durable.Scaler.Server
                     webBuilder.ConfigureKestrel(options =>
                     {
                         options.Listen(IPAddress.Any, 5000, o => o.Protocols = HttpProtocols.Http2);
-                        //options.Listen(IPAddress.Any, 5000, listenOptions =>
+                        //options.Listen(IPAddress.Any, 5001, listenOptions =>
                         //{
                         //    listenOptions.Protocols = HttpProtocols.Http2;
                         //    // listenOptions.UseHttps(Environment.GetEnvironmentVariable(Startup.CertPath),
