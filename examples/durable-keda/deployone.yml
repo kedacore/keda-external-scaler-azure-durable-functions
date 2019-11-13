@@ -50,6 +50,9 @@ metadata:
 spec:
   scaleTargetRef:
     deploymentName: durable-keda
+  pollingInterval: 5
+  cooldownPeriod: 30
+  minReplicaCount: 1
   triggers:
   - type: external
     metadata:

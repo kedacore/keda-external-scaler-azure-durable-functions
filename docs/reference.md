@@ -103,6 +103,9 @@ The following arguments are supported:
 * `spec.triggers.metadata.scaleAddress`: (Required) Address and port of KEDA Durable Scale Server's endpoint.
 * `spec.triggers.metadata.tlsCertFile`: (Optional) TLS certfile for https between KEDA and KEDA Durable Scaler Server. Currently not supported. Coming soon. 
 
+You can find more argument that is allowed for ScaleObject in here.
+* [ScaledObject specification](https://github.com/kedacore/keda/blob/10c92ff1348b20df14921b156f611b0243924f89/spec/ScaledObject.md)
+
 ## Debugging on containers 
 
 ### Endpoint of Durable Functions 
