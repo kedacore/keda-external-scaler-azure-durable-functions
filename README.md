@@ -1,7 +1,7 @@
 
 # KEDA Durable Functions Scaler
 
-[![Build Status](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_apis/build/status/microsoft.keda-durable-scaler?branchName=master)](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_build/latest?definitionId=16&branchName=master)
+[![Build Status](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_apis/build/status/kedacore.keda-scaler-durable-functions?branchName=master)](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_build/latest?definitionId=17&branchName=master)
 
 KEDA Durable Functions Scaler is an extension that is enable us to autocale Durable Functions deployed on Kubernetes cluster. 
 This extension uses [External Scaler Support for KEDA](https://github.com/kedacore/keda/pull/294).
