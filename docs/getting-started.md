@@ -34,7 +34,7 @@ $ kubectl apply -f deploy/
 Clone the KEDA Durable Scaler repo
 
 ```bash
-$ git clone git@github.com:microsoft/keda-durable-scaler.git
+$ git clone git@github.com:kedacore/keda-scaler-durable-functions.git
 $ cd keda-durable-scaler
 ```
 
