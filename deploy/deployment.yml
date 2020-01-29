@@ -52,7 +52,7 @@ spec:
     spec:
       serviceAccountName: keda-durable-scaler
       containers:
-      - image: tsuyoshiushio/durableexternalscaler:latest
+      - image: kedacore/keda-scaler-durable-functions:latest
         name: scaler
         ports:
           - containerPort: 5000

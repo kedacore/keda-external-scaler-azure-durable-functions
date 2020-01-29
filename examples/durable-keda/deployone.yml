@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: durable-keda
-        image: tsuyoshiushio/durable-keda:latest
+        image: kedacore/durable-keda:latest
         ports:
         - containerPort: 80
         env:

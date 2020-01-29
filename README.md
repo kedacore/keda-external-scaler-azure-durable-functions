@@ -32,7 +32,7 @@ KEDA Durable Functions Scaler works as a gRPC server of the [External Scaler Sup
 Currently, KEDA Durable Scaler can't make functions scale down to zero. Minimum pod number is one. Durable Scaler need to send data to control/worker queue. For achieve this behavior, we need to separate the HTTP and non-HTTP deployments. However, the feature seems not working. We need to wait until this issue is fixed. 
 
 * [Add configuration for enabling only HTTP or only non-HTTP functions #4412](https://github.com/Azure/azure-functions-host/issues/4412)
-* [Pods doesn't scale in to zero #17](https://github.com/microsoft/keda-durable-scaler/issues/17)
+* [Pods doesn't scale in to zero #17](https://github.com/kedacore/keda-scaler-durable-functions/issues/17)
 
 ## Getting Started & Documentation
 

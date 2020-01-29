@@ -66,15 +66,15 @@ You can refer [Getting Started](getting-started.md) to create and configure cert
 
 For reading this code, there is several important files are there. 
 
-#### [ExternalScalerService](https://github.com/microsoft/keda-durable-scaler/blob/master/src/Keda.Durable.Scaler.Server/Services/ExternalScalerService.cs)
+#### [ExternalScalerService](https://github.com/kedacore/keda-scaler-durable-functions/blob/master/src/Keda.Durable.Scaler.Server/Services/ExternalScalerService.cs)
 
 Core logic of the scaling. This class implement scaler logic of this server. It uses, [DurableTask.DisconnectPerformanceMonitor](https://github.com/Azure/durabletask/blob/master/src/DurableTask.AzureStorage/Monitoring/DisconnectedPerformanceMonitor.cs#L89) for getting analytics data nad telemetry. 
 
-#### [externalscaler.proto](https://github.com/microsoft/keda-durable-scaler/blob/master/src/Keda.Durable.Scaler.Server/Protos/externalscaler.proto)
+#### [externalscaler.proto](https://github.com/kedacore/keda-scaler-durable-functions/blob/master/src/Keda.Durable.Scaler.Server/Protos/externalscaler.proto)
 
 Protocol buffer of the [External Scaler Support for KEDA](https://github.com/kedacore/keda/pull/294). Usually, you might need to generate code from this buffer. It is automatically done by [gRPC services with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/grpc/aspnetcore?view=aspnetcore-3.0&tabs=visual-studio). You can see the generated file under the obj directory, however, you don't need commit these files to the repo. 
 
-#### [Startup.cs](https://github.com/microsoft/keda-durable-scaler/blob/master/src/Keda.Durable.Scaler.Server/Startup.cs#L21)
+#### [Startup.cs](https://github.com/kedacore/keda-scaler-durable-functions/blob/master/src/Keda.Durable.Scaler.Server/Startup.cs#L21)
 
 It contains DI configration for the server, it also include Enviornment Variables configration for the Server. 
 
