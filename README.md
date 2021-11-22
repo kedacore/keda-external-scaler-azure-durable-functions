@@ -1,4 +1,7 @@
 
+> 📢 This external scaler only supports KEDA v1.x and is no longer maintained.
+> If you want to scale applications using Durable Functions, we recommend using the SQL backend with our [MS SQL scaler](https://keda.sh/docs/latest/scalers/mssql/).
+
 # KEDA Durable Functions Scaler
 
 [![Build Status](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_apis/build/status/kedacore.keda-scaler-durable-functions?branchName=master)](https://durabletaskframework.visualstudio.com/Durable%20Task%20Framework%20CI/_build/latest?definitionId=17&branchName=master)
